@@ -1,0 +1,14 @@
+h1{
+    color: white;
+}
+button{
+    width: 100px;
+    border: none;
+    outline: none;
+    background-color: #45f3ff;
+    padding: 11px 25px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
