@@ -2,32 +2,32 @@ import { Button, Form, Input, notification } from "antd";
 import React from "react";
 import { useState } from "react";
 import "./index.css";
-import userAPI from "../../api/user";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useMutation } from "react-query";
-const Modal = ({formType}) => {
+import { useLogin, useRegister } from "../../api/user";
+const Modal = ({ formType }) => {
   const { register, handleSubmit } = useForm();
+  const { mutateAsync: login } = useLogin();
+  const { mutateAsync: signup } = useRegister();
   const navigate = useNavigate();
   const changeFormStyle = (value) => {
     navigate(`/${value}`);
   };
-  const { mutate } = useMutation((values) => onSubmit(values));
 
   const onSubmit = async (data) => {
     if (formType === "login") {
       delete data.confirmPassword;
-      const res = await userAPI.login(data);
+      const res = await login(data);
       if (res.errorCode) {
         toast.error(res.data, { position: "top-right" });
       } else {
-          toast.success("Login successfully", { position: "top-right" });
-          localStorage.setItem("token", res.data.token);
-          navigate("/");
+        toast.success("Login successfully", { position: "top-right" });
+        localStorage.setItem("token", res.data.token);
+        navigate("/");
       }
     } else if (formType === "register") {
-      const res = await userAPI.register(data);
+      const res = await signup(data);
       if (res.errorCode) {
         toast.error(res.data, { position: "top-right" });
       } else {
@@ -40,7 +40,7 @@ const Modal = ({formType}) => {
 
   return (
     <div className="App">
-      <form className="form" onSubmit={handleSubmit(mutate)}>
+      <form className="form" onSubmit={handleSubmit(onSubmit)}>
         <h2>{formType === "login" ? "Sign In" : "Sign Up"}</h2>
         <div name="email" className="inputBox">
           <input className="input" required {...register("email")} />

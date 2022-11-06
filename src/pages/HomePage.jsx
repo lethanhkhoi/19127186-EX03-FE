@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import userAPI from "../api/user";
 import "./index.css";
 import { Button } from "antd";
+import { verify } from "../api/user";
 const HomePage = () => {
   const navigate = useNavigate();
-  const verify = async () => {
-    const response = await userAPI.verify();
+  const verifyToken = async () => {
+    const response = await verify();
     console.log(response);
     if (response.errorCode) {
       navigate("/login");
@@ -17,7 +17,7 @@ const HomePage = () => {
     navigate("/login");
   };
   useEffect(() => {
-    verify();
+    verifyToken();
   }, []);
   return (
     <div style={{ display: "flex", alignItems: "center" }}>

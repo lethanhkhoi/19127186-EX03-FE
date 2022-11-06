@@ -1,19 +1,17 @@
 import { axiosClient } from ".";
+import { useMutation } from  "react-query";
+export const useLogin = () =>{
+    // const response = await axiosClient.post("/login", data);
+    // return response;
+    return useMutation((data) => axiosClient.post("/login", data))
+}
+export const verify = async() =>{
+    const response = await axiosClient.get("/verify");
+    return response;
+}
+export const useRegister = () =>{
+    // const response = await axiosClient.post("/register", data);
+    // return response;
+    return useMutation((data) => axiosClient.post("/register", data))
 
-const userAPI = {
-    async login(data) {
-        const response = await axiosClient.post("/login", data);
-        console.log(response)
-        return response;
-    },
-    async verify() {
-        const response = await axiosClient.get("/verify");
-        return response;
-    },
-    async register(data) {
-        const response = await axiosClient.post("/register", data);
-        return response;
-    },
-};
-
-export default userAPI;
+}
