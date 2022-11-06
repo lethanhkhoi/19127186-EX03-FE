@@ -1,5 +1,4 @@
 import axios from "axios";
-import queryString from "query-string";
 const apiConfig = {
   baseURL: "https://be-template-19127186.herokuapp.com/",
   // baseURL: "http://localhost:3001/",
@@ -33,6 +32,7 @@ axiosClient.interceptors.response.use(
     if (error?.response?.status === 401) {
       localStorage.removeItem("token");
     }
+    return error?.response?.data
   }
 );
 
