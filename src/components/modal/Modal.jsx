@@ -1,5 +1,5 @@
 import { Button, Form, Input, notification } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import "./index.css";
 import { useNavigate } from "react-router-dom";
@@ -7,13 +7,20 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useLogin, useRegister } from "../../api/user";
 const Modal = ({ formType }) => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const { mutateAsync: login } = useLogin();
   const { mutateAsync: signup } = useRegister();
   const navigate = useNavigate();
   const changeFormStyle = (value) => {
     navigate(`/${value}`);
   };
+  useEffect(() => {
+    setValue("email", "");
+    setValue("password", "");
+    if (formType === "register") {
+      setValue("confirmPassword", "");
+    }
+  }, [formType]);
 
   const onSubmit = async (data) => {
     if (formType === "login") {
