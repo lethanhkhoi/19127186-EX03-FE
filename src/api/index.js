@@ -1,24 +1,17 @@
+
 import axios from "axios";
-const apiConfig = {
-  baseURL: "https://be-template-19127186.herokuapp.com/",
-  // baseURL: "http://localhost:3001/",
-  token: localStorage.getItem("token") || "",
-};
 
 const axiosClient = axios.create({
-  baseURL: apiConfig.baseURL,
+  // baseURL: "https://be-template-19127186.herokuapp.com/",
+  baseURL: "http://localhost:3001/",
   headers: {
     "Content-Type": "application/json",
-    // token: apiConfig.token,
   },
 });
 
 axiosClient.interceptors.request.use(async (config) => {
-  const token = localStorage.getItem("token")
-  if (token) {
-    config.headers.token = token;
-  }
-
+  const token = localStorage.getItem("token");
+  config.headers.token = `${token}` || "";
   return config;
 });
 axiosClient.interceptors.response.use(
@@ -28,11 +21,30 @@ axiosClient.interceptors.response.use(
     }
     return response;
   },
-  (error) => {
-    if (error?.response?.status === 401) {
+  async (error) => {
+    if (error?.response?.status === 401 || error?.response?.status === 400) {
       localStorage.removeItem("token");
+      window.location.href = "/";
     }
-    return error?.response?.data
+    const originalRequest = error.config;
+    if (error?.response?.status === 403 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const result = await axiosClient.post("/refreshToken", {
+        refreshToken: localStorage.getItem("refreshToken"),
+      });
+      if (result?.errorCode) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/";
+        return;
+      }
+      localStorage.setItem("token", result?.data?.token);
+      localStorage.setItem("refreshToken", result?.data?.refreshToken);
+      axiosClient.defaults.headers.common["token"] =
+        result?.data?.token;
+
+      return axiosClient(originalRequest);
+    }
   }
 );
 

@@ -29,7 +29,8 @@ const Modal = ({ formType }) => {
       } else {
         toast.success("Login successfully", { position: "top-right" });
         localStorage.setItem("token", res.data.token);
-        navigate("/");
+        localStorage.setItem("refreshToken", res.data.refreshToken);
+        navigate("/home");
       }
     } else if (formType === "register") {
       const res = await signup(data);
@@ -38,7 +39,8 @@ const Modal = ({ formType }) => {
       } else {
         toast.success("Login successfully", { position: "top-right" });
         localStorage.setItem("token", res.data.token);
-        navigate("/");
+        localStorage.setItem("refreshToken", res.data.refreshToken);
+        navigate("/home");
       }
     }
   };
